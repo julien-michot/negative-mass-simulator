@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Newtonian Particle Sim</title>
+    <title>Newtonian Particle Simulator with negative mass</title>
     <link rel="stylesheet" href="demo.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
@@ -19,8 +19,8 @@
 <div id="controls-panel" class="panel">
     <h1>Configuration</h1>
     <div class="row">
-        <label>Particles <span id="p-label" class="label-val">2,000</span></label>
-        <input type="range" id="input-p" min="100" max="100000" step="1000" value="2000">
+        <label>Particles <span id="p-label" class="label-val">5,000</span></label>
+        <input type="range" id="input-p" min="100" max="100000" step="1000" value="5000">
     </div>
     <div class="row">
         <label>Start Velocity</label>
@@ -34,12 +34,12 @@
         <input type="range" id="input-v" min="0" max="100" step="0.5" value="0.0">
     </div>
     <div class="row">
-        <label>Gravity (G) <span id="g-label" class="label-val">20.0</span></label>
-        <input type="range" id="input-g" min="0" max="100" step="0.5" value="20.0">
+        <label>Gravity (G) <span id="g-label" class="label-val">10.0</span></label>
+        <input type="range" id="input-g" min="0" max="100" step="0.5" value="10.0">
     </div>
     <div class="row">
-        <label>Global Scale <span id="scale-label" class="label-val">1.0</span></label>
-        <input type="range" id="input-scale" min="0.1" max="5.0" step="0.1" value="1.0">
+        <label>Global Scale <span id="scale-label" class="label-val">0.5</span></label>
+        <input type="range" id="input-scale" min="0.1" max="5.0" step="0.1" value="0.5">
     </div>
     <div class="row">
         <label>Merging Reach <span id="merge-label" class="label-val">0.1</span></label>
@@ -47,14 +47,14 @@
     </div>
     <div class="row">
         <label>Time Step (dt) <span id="dt-label" class="label-val">0.6</span></label>
-        <input type="range" id="input-dt" min="0.05" max="2.0" step="0.05" value="0.6">
+        <input type="range" id="input-dt" min="-1.0" max="2.0" step="0.05" value="0.6">
     </div>
 
     <div class="row">
         <label>Show Particles</label>
         <div class="checkbox-group">
-            <label><input type="checkbox" id="show-pos" checked> Pos (Red)</label>
-            <label><input type="checkbox" id="show-neg" checked> Neg (Blue)</label>
+            <label><input type="checkbox" id="show-pos" checked> Positive (Red)</label>
+            <label><input type="checkbox" id="show-neg" checked> Negative (Blue)</label>
         </div>
     </div>
 

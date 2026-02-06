@@ -1,16 +1,15 @@
 const MAX_PHYSICS_CAPACITY = 100000;
-const FLASH_CAPACITY = 120;
 
 const STATE = {
     G: 10.0,
     initV: 0.0,
     dt: 0.6,
-    mergeReach: 0.1,
-    initialCount: 2000,
+    mergeReach: 0.12,
+    initialCount: 5000,
     cameraZoom: 0.5,
     showPos: true,
     showNeg: true,
-    particleScale: 1.0,
+    particleScale: 0.5,
     velocityMode: 'zero'
 };
 
@@ -21,12 +20,7 @@ const dataActive = new Uint8Array(MAX_PHYSICS_CAPACITY);
 const colorBuffer = new Float32Array(MAX_PHYSICS_CAPACITY * 3);
 const sizeBuffer = new Float32Array(MAX_PHYSICS_CAPACITY);
 
-const flashPos = new Float32Array(FLASH_CAPACITY * 3);
-const flashLife = new Float32Array(FLASH_CAPACITY);
-const flashColor = new Float32Array(FLASH_CAPACITY * 3);
-let flashIndex = 0;
-
-let scene, camera, renderer, pointsSystem, geometry, flashSystem, flashGeometry;
+let scene, camera, renderer, pointsSystem, geometry;
 let grid = new Map();
 let currentActiveCount = 0;
 let maxMass = 1.0;
@@ -81,19 +75,6 @@ function init() {
     pointsSystem = new THREE.Points(geometry, material);
     scene.add(pointsSystem);
 
-    flashGeometry = new THREE.BufferGeometry();
-    flashGeometry.setAttribute('position', new THREE.BufferAttribute(flashPos, 3));
-    flashGeometry.setAttribute('color', new THREE.BufferAttribute(flashColor, 3));
-    flashGeometry.setAttribute('life', new THREE.BufferAttribute(flashLife, 1));
-
-    const flashMaterial = new THREE.ShaderMaterial({
-        transparent: true, blending: THREE.AdditiveBlending, depthTest: false,
-        vertexShader: `attribute float life; attribute vec3 color; varying vec3 vColor; varying float vLife; void main() { vColor = color; vLife = life; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); gl_PointSize = (30.0 + (1.0 - life) * 100.0); }`,
-        fragmentShader: `varying vec3 vColor; varying float vLife; void main() { float dist = length(gl_PointCoord - vec2(0.5)); if (dist > 0.5) discard; float intensity = (1.0 - dist * 2.0) * vLife; gl_FragColor = vec4(vColor * 1.5, intensity); }`
-    });
-
-    flashSystem = new THREE.Points(flashGeometry, flashMaterial);
-    scene.add(flashSystem);
     resetSim();
 }
 
@@ -121,7 +102,7 @@ function setupInputs() {
             STATE[key] = val;
             document.getElementById(labelId).innerText = val.toLocaleString(undefined, { minimumFractionDigits: fixed });
             if (key === 'particleScale') {
-                for(let i=0; i<MAX_PHYSICS_CAPACITY; i++) if(dataActive[i]) updateVisual(i);
+                for (let i = 0; i < MAX_PHYSICS_CAPACITY; i++) if (dataActive[i]) updateVisual(i);
             }
         });
     });
@@ -149,7 +130,7 @@ function setupInputs() {
 
     // Drag and Pan interactions
     window.addEventListener('touchstart', (e) => {
-        if(e.target.closest('.panel') || e.target.id === 'toggle-ui') return;
+        if (e.target.closest('.panel') || e.target.id === 'toggle-ui') return;
         if (e.touches.length === 1) {
             isDragging = true;
             lastMousePos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
@@ -173,7 +154,7 @@ function setupInputs() {
 
     window.addEventListener('touchend', () => { isDragging = false; lastPinchDist = 0; });
     window.addEventListener('mousedown', (e) => {
-        if(e.target.closest('.panel') || e.target.id === 'toggle-ui') return;
+        if (e.target.closest('.panel') || e.target.id === 'toggle-ui') return;
         isDragging = true; lastMousePos = { x: e.clientX, y: e.clientY };
     });
     window.addEventListener('mousemove', (e) => {
@@ -205,25 +186,25 @@ function resetSim() {
             const r = Math.sqrt(Math.random()) * 1200;
             const px = Math.cos(angle) * r;
             const py = Math.sin(angle) * r;
-            dataPos[i*2] = px;
-            dataPos[i*2+1] = py;
+            dataPos[i * 2] = px;
+            dataPos[i * 2 + 1] = py;
 
             if (STATE.velocityMode === 'orbital') {
                 const orbitalSpeed = STATE.initV * (0.8 + Math.random() * 0.4);
                 const noise = 0.1;
-                dataVel[i*2] = -Math.sin(angle) * orbitalSpeed + (Math.random() - 0.5) * orbitalSpeed * noise;
-                dataVel[i*2+1] = Math.cos(angle) * orbitalSpeed + (Math.random() - 0.5) * orbitalSpeed * noise;
+                dataVel[i * 2] = -Math.sin(angle) * orbitalSpeed + (Math.random() - 0.5) * orbitalSpeed * noise;
+                dataVel[i * 2 + 1] = Math.cos(angle) * orbitalSpeed + (Math.random() - 0.5) * orbitalSpeed * noise;
             } else {
-                dataVel[i*2] = 0;
-                dataVel[i*2+1] = 0;
+                dataVel[i * 2] = 0;
+                dataVel[i * 2 + 1] = 0;
             }
 
-            dataProps[i*2] = 1.0;
-            dataProps[i*2+1] = Math.random() > 0.5 ? 1 : -1;
+            dataProps[i * 2] = 1.0;
+            dataProps[i * 2 + 1] = Math.random() > 0.5 ? 1 : -1;
             updateVisual(i);
         } else {
             dataActive[i] = 0;
-            positions[i*3] = 999999;
+            positions[i * 3] = 999999;
         }
     }
 }
@@ -233,7 +214,7 @@ function updatePhysics() {
     const invGSize = 1.0 / 200;
     for (let i = 0; i < MAX_PHYSICS_CAPACITY; i++) {
         if (dataActive[i] === 0) continue;
-        const k = (Math.floor(dataPos[i*2]*invGSize)*31) ^ Math.floor(dataPos[i*2+1]*invGSize);
+        const k = (Math.floor(dataPos[i * 2] * invGSize) * 31) ^ Math.floor(dataPos[i * 2 + 1] * invGSize);
         if (!grid.has(k)) grid.set(k, []);
         grid.get(k).push(i);
     }
@@ -241,109 +222,89 @@ function updatePhysics() {
     const posArr = geometry.attributes.position.array;
     for (let i = 0; i < MAX_PHYSICS_CAPACITY; i++) {
         if (dataActive[i] === 0) {
-            posArr[i*3] = 999999;
+            posArr[i * 3] = 999999;
             continue;
         }
 
-        const type = dataProps[i*2+1];
+        const type = dataProps[i * 2 + 1];
         if ((type > 0 && !STATE.showPos) || (type < 0 && !STATE.showNeg)) {
-            posArr[i*3] = 999999;
+            posArr[i * 3] = 999999;
         } else {
-            posArr[i*3] = dataPos[i*2];
-            posArr[i*3+1] = dataPos[i*2+1];
+            posArr[i * 3] = dataPos[i * 2];
+            posArr[i * 3 + 1] = dataPos[i * 2 + 1];
         }
 
         let fx = 0, fy = 0;
-        const p1x = dataPos[i*2], p1y = dataPos[i*2+1], m1 = dataProps[i*2], t1 = type;
-        const gx = Math.floor(p1x*invGSize), gy = Math.floor(p1y*invGSize);
-        const limit = STATE.initialCount > 50000 ? 50 : 200;
+        const p1x = dataPos[i * 2], p1y = dataPos[i * 2 + 1], m1 = dataProps[i * 2], t1 = type;
+        const gx = Math.floor(p1x * invGSize), gy = Math.floor(p1y * invGSize);
+        const limit = 0; //STATE.initialCount > 50000 ? 50 : 200;
         let c = 0;
 
-        outer: for (let dx = -1; dx <= 1; dx++) {
+        outer:
+        for (let dx = -1; dx <= 1; dx++) {
             for (let dy = -1; dy <= 1; dy++) {
-                const cell = grid.get(((gx+dx)*31)^(gy+dy));
+                const cell = grid.get(((gx + dx) * 31) ^ (gy + dy));
                 if (!cell) continue;
                 for (let j of cell) {
                     if (i === j || dataActive[j] === 0) continue;
-                    const dxP = dataPos[j*2]-p1x, dyP = dataPos[j*2+1]-p1y, d2 = dxP*dxP+dyP*dyP;
-                    const mergeT = (Math.sqrt(m1)+Math.sqrt(dataProps[j*2]))*1.8 * STATE.mergeReach;
+                    const dxP = dataPos[j * 2] - p1x, dyP = dataPos[j * 2 + 1] - p1y, d2 = dxP * dxP + dyP * dyP;
+                    const mergeT = (Math.sqrt(m1) + Math.sqrt(dataProps[j * 2])) * 1.8 * STATE.mergeReach;
 
-                    if (d2 < mergeT*mergeT) {
-                        if (m1 >= dataProps[j*2]) {
-                            const nm = m1+dataProps[j*2];
+                    if (d2 < mergeT * mergeT) {
+                        if (m1 >= dataProps[j * 2]) {
+                            const nm = m1 + dataProps[j * 2];
                             // ONLY FLASH FOR POSITIVE PARTICLES (Red)
-                            if(type > 0 && STATE.initialCount < 40000) {
-                                // WHITE FLASH
-                                createFlash(dataPos[j*2], dataPos[j*2+1], 1.0, 1.0, 1.0);
+                            if (type > 0 && STATE.initialCount < 40000) {
+                                // TODO WHITE FLASH
                             }
-                            dataVel[i*2] = (dataVel[i*2]*m1 + dataVel[j*2]*dataProps[j*2])/nm;
-                            dataVel[i*2+1] = (dataVel[i*2+1]*m1 + dataVel[j*2+1]*dataProps[j*2])/nm;
-                            dataPos[i*2] = (p1x*m1+dataPos[j*2]*dataProps[j*2])/nm;
-                            dataPos[i*2+1] = (p1y*m1+dataPos[j*2+1]*dataProps[j*2])/nm;
-                            dataProps[i*2] = nm; dataActive[j] = 0; currentActiveCount--;
+                            dataVel[i * 2] = (dataVel[i * 2] * m1 + dataVel[j * 2] * dataProps[j * 2]) / nm;
+                            dataVel[i * 2 + 1] = (dataVel[i * 2 + 1] * m1 + dataVel[j * 2 + 1] * dataProps[j * 2]) / nm;
+                            dataPos[i * 2] = (p1x * m1 + dataPos[j * 2] * dataProps[j * 2]) / nm;
+                            dataPos[i * 2 + 1] = (p1y * m1 + dataPos[j * 2 + 1] * dataProps[j * 2]) / nm;
+                            dataProps[i * 2] = nm; dataActive[j] = 0; currentActiveCount--;
                             if (nm > maxMass) maxMass = nm;
                             updateVisual(i);
                         }
                         continue;
                     }
-                    const d = Math.sqrt(d2+100), force = (STATE.G*m1*dataProps[j*2])/(d2+400);
-                    const dir = (t1*dataProps[j*2+1]) > 0 ? 1 : -2.5;
-                    fx += force*(dxP/d)*dir; fy += force*(dyP/d)*dir;
-                    if (++c > limit) break outer;
+                    const d = Math.sqrt(d2 + 100), force = (STATE.G * m1 * dataProps[j * 2]) / (d2 + 400);
+                    const dir = (t1 * dataProps[j * 2 + 1]) > 0 ? 1 : -2.5;
+                    fx += force * (dxP / d) * dir; fy += force * (dyP / d) * dir;
+                    if (limit > 0 && ++c > limit) break outer;
                 }
             }
         }
-        dataVel[i*2] += (fx/m1)*STATE.dt; dataVel[i*2+1] += (fy/m1)*STATE.dt;
+        dataVel[i * 2] += (fx / m1) * STATE.dt; dataVel[i * 2 + 1] += (fy / m1) * STATE.dt;
     }
 
     for (let i = 0; i < MAX_PHYSICS_CAPACITY; i++) {
         if (dataActive[i] === 1) {
-            dataPos[i*2] += dataVel[i*2]*STATE.dt; dataPos[i*2+1] += dataVel[i*2+1]*STATE.dt;
+            dataPos[i * 2] += dataVel[i * 2] * STATE.dt; dataPos[i * 2 + 1] += dataVel[i * 2 + 1] * STATE.dt;
         }
     }
     geometry.attributes.position.needsUpdate = true;
 }
 
 function updateVisual(i) {
-    const m = dataProps[i*2], type = dataProps[i*2+1];
+    const m = dataProps[i * 2], type = dataProps[i * 2 + 1];
     const baseSize = (STATE.initialCount > 30000 ? 1 : 2);
-    sizeBuffer[i] = (baseSize + Math.pow(m, 0.45)*5) * STATE.particleScale;
+    sizeBuffer[i] = (baseSize + Math.pow(m, 0.45) * 5) * STATE.particleScale;
 
     const colors = geometry.attributes.color.array;
     if (type > 0) {
-        colors[i*3] = 1.0; colors[i*3+1] = 0.2; colors[i*3+2] = 0.1;
+        colors[i * 3] = 1.0; colors[i * 3 + 1] = 0.2; colors[i * 3 + 2] = 0.1;
     } else {
-        colors[i*3] = 0.1; colors[i*3+1] = 0.5; colors[i*3+2] = 1.0;
+        colors[i * 3] = 0.1; colors[i * 3 + 1] = 0.5; colors[i * 3 + 2] = 1.0;
     }
     geometry.attributes.color.needsUpdate = true; geometry.attributes.size.needsUpdate = true;
 }
 
-function updateFlashes() {
-    for (let i = 0; i < FLASH_CAPACITY; i++) {
-        if (flashLife[i] > 0) {
-            flashLife[i] -= 0.05;
-            if (flashLife[i] < 0) flashLife[i] = 0;
-        } else {
-            flashPos[i*3] = 999999;
-        }
-    }
-    flashGeometry.attributes.position.needsUpdate = true;
-    flashGeometry.attributes.life.needsUpdate = true;
-}
-
 function animate() {
     requestAnimationFrame(animate);
-    updatePhysics(); updateFlashes();
+    updatePhysics();
     document.getElementById('count').innerText = currentActiveCount.toLocaleString();
     document.getElementById('max-mass').innerText = maxMass.toFixed(1);
     renderer.render(scene, camera);
-}
-
-function createFlash(x, y, r, g, b) {
-    const idx = flashIndex % FLASH_CAPACITY;
-    flashPos[idx*3] = x; flashPos[idx*3+1] = y; flashPos[idx*3+2] = 2;
-    flashColor[idx*3] = r; flashColor[idx*3+1] = g; flashColor[idx*3+2] = b;
-    flashLife[idx] = 1.0; flashIndex++;
 }
 
 function onWindowResize() {

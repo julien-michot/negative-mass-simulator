@@ -33,8 +33,7 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: #4db8ff; margi
 .stat-row { display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 4px; }
 .stat-val { color: #4db8ff; font-weight: bold; font-family: 'Courier New', monospace; }
 
-#btn-reset {
-    width: 100%;
+button {
     background: #0055aa;
     color: white;
     border: none;
@@ -45,6 +44,13 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: #4db8ff; margi
     margin-top: 10px;
     text-transform: uppercase;
     transition: background 0.2s;
+}
+button:hover { background: #0077ee; }
+
+#btn-reset {
+    width: 100%;
+    background: #0055aa;
+    color: white;
 }
 #btn-reset:hover { background: #0077ee; }
 
