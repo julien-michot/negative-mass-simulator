@@ -52,15 +52,15 @@ Because the negative mass repels the positive mass but the positive mass is attr
 
 ### 1. Structure
 Ensure your project has the following files:
-* `index.html`: The container with a `<canvas>` element.
+* [`index.html`](index.html): The container with a `<canvas>` element.
 * `demo.js`: The simulation logic.
 
 ### 2. Running Locally
-Simply open your `index.html` in any modern web browser.
+Simply open your [`index.html`](index.html) file in any modern web browser.
 
 
 ## 🚀 Configuration
 see `demo.js`.
 
 ## License
-Apache v2
+Apache v2.
