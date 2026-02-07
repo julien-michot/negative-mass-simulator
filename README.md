@@ -40,10 +40,10 @@ Because the negative mass repels the positive mass but the positive mass is attr
   * *Explores the hypothesis of a "mirror" universe with reversed arrows of time and mass properties.*
 
 ### Jean-Pierre Petit
-* **The Janus Cosmological Model (2014)**
-  * [Read the paper (ResearchGate)](https://www.researchgate.net/publication/269112948_The_Janus_Cosmological_Model)
-* **Twin Universe Model**
-  * [Detailed Archive (JP-Petit.org)](https://www.jp-petit.org/science/f200/f2100/a2101.htm)
+* **Janus Cosmological Model Mathematically & Physically Consistent (2024)**
+  * [Read the paper (HAL Archives)](https://hal.science/hal-04583560/)
+* **Janus cosmological model (2021)**
+  * [Read the paper (HAL Archives)](https://hal.science/hal-03285671/)
   * *Outlines the specific bimetric equations that allow for the "soap bubble" large-scale structure.*
 
 ---
