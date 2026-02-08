@@ -58,6 +58,9 @@ Ensure your project has the following files:
 ### 2. Running Locally
 Simply open your [`index.html`](index.html) file in any modern web browser.
 
+### 3. Live preview
+[Run Live preview](https://julien-michot.github.io/negative-mass-simulator/)
+
 
 ## 🚀 Configuration
 see `demo.js`.
