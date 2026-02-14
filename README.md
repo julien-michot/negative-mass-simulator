@@ -55,15 +55,17 @@ Ensure your project has the following files:
 * [`index.html`](index.html): The container with a `<canvas>` element.
 * `demo.js`: The simulation logic.
 
-### 2. Running Locally
-Simply open your [`index.html`](index.html) file in any modern web browser.
+### 2. Running Locally (CPU)
+Simply open your [`cpu/index.html`](cpu/index.html) file in any modern web browser.
 
-### 3. Live preview
-[Run Live preview](https://julien-michot.github.io/negative-mass-simulator/)
+### 3. Running Locally (GPU)
+Simply open your [`gpu/index.html`](gpu/index.html) file in any modern web browser.
+(make sure to enable WebGPU, e.g. `chrome://flags/#enable-unsafe-webgpu`).
 
+### 4. Live preview
+[Run Live preview (CPU)](https://julien-michot.github.io/negative-mass-simulator/cpu)
+[Run Live preview (CPU)](https://julien-michot.github.io/negative-mass-simulator/gpu)
 
-## 🚀 Configuration
-see `demo.js`.
 
 ## License
 Apache v2.

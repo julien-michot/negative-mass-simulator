@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WebGPU N-Body with Positive and Negative Masses</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="hud">
+      <div class="title">Barnes-Hut N-Body (WebGPU)</div>
+      <div class="subtitle">10k particles · GPU quadtree</div>
+      <div class="controls">
+        <label class="control-row">
+          <span>Solver</span>
+          <select id="solverMode">
+            <option value="direct">Direct (O(N²))</option>
+            <option value="barnes">Barnes–Hut</option>
+          </select>
+        </label>
+        <label class="control-row">
+          <span>dt (log10)</span>
+          <!-- log-scaled slider: exponent range from -10 (1e-10) to 1 (10) -->
+          <input id="dtSlider" type="range" min="-10" max="1" step="0.01" value="-2.70" />
+          <span id="dtValue" class="value">0.0020</span>
+        </label>
+        <label class="control-row">
+          <span>gravity</span>
+          <input id="gravitySlider" type="range" min="0.05" max="2" step="0.01" value="0.5" />
+          <span id="gravityValue" class="value">0.50</span>
+        </label>
+        <label class="control-row">
+          <span>theta</span>
+          <input id="thetaSlider" type="range" min="0.2" max="1.2" step="0.01" value="0.5" />
+          <span id="thetaValue" class="value">0.50</span>
+        </label>
+        <label class="control-row">
+          <span>particles</span>
+          <input id="particleCountSlider" type="range" min="100" max="20000" step="100" value="10000" />
+          <span id="particleCountValue" class="value">10000</span>
+        </label>
+        <label class="control-row">
+          <span>enable merging</span>
+          <input id="enableMerging" type="checkbox" />
+        </label>
+        <label class="control-row">
+          <span>merge reach</span>
+          <input id="mergeReachSlider" type="range" min="0.0" max="0.5" step="0.01" value="0.12" />
+          <span id="mergeReachValue" class="value">0.12</span>
+        </label>
+        <label class="control-row">
+          <span>show positive</span>
+          <input id="showPositive" type="checkbox" checked />
+        </label>
+        <label class="control-row">
+          <span>show negative</span>
+          <input id="showNegative" type="checkbox" checked />
+        </label>
+        <div class="control-row">
+          <button id="regenerateButton">Regenerate</button>
+        </div>
+        <div class="control-row">
+          <button id="pauseButton">Pause</button>
+        </div>
+        <div class="control-row">
+          <button id="stepButton">Step</button>
+        </div>
+      </div>
+      <div id="status" class="status">Initializing...</div>
+      <div class="hint">Drag to pan · Scroll/pinch to zoom</div>
+    </div>
+    <canvas id="gpuCanvas"></canvas>
+    <script src="demo.js"></script>
+  </body>
+</html>
