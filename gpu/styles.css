@@ -1,0 +1,89 @@
+:root {
+  color-scheme: dark;
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #ffffff;
+  color: #e5ecff;
+  overflow: hidden;
+}
+
+#gpuCanvas {
+  width: 100vw;
+  height: 100vh;
+  display: block;
+}
+
+.hud {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 10;
+  padding: 12px 14px;
+  background: rgba(6, 10, 18, 0.7);
+  border: 1px solid rgba(80, 110, 180, 0.4);
+  border-radius: 10px;
+  backdrop-filter: blur(6px);
+  max-width: 320px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-size: 12px;
+  color: #9fb0d1;
+}
+
+.controls {
+  margin-top: 10px;
+  display: grid;
+  gap: 6px;
+}
+
+.control-row {
+  display: grid;
+  grid-template-columns: 64px 1fr 56px;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: #c6d2ef;
+}
+
+.control-row select,
+.control-row input[type="range"] {
+  width: 100%;
+}
+
+.control-row select {
+  grid-column: 2 / span 2;
+  background: rgba(15, 22, 36, 0.9);
+  color: #e5ecff;
+  border: 1px solid rgba(90, 120, 190, 0.5);
+  border-radius: 6px;
+  padding: 4px 6px;
+  font-size: 11px;
+}
+
+.control-row .value {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.status {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #b9c7ea;
+  white-space: pre-line;
+}
+
+.hint {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #7f8db1;
+}
